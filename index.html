@@ -50,9 +50,7 @@
 
     {% if blueprint_path %}
         <h2>Ваш чертеж готов!</h2>
-        <button onclick="copyBlueprint('{{ blueprint_path }}')">Скопировать чертеж</button>
-        <br><br>
-        <a href="{{ url_for('download_file', client_id=client_id, filename=blueprint_path.split('/')[-1]) }}" download>Скачать чертеж</a>
+        <button onclick="copyBlueprint('{{ blueprint_path }}')">Копировать в буфер обмена</button>
     {% endif %}
 </body>
 </html>
