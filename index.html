@@ -130,6 +130,7 @@
 
                         // Устанавливаем src для сконвертированной картинки
                         convertedImage.src = `${ngrokUrl}/download/${data.client_id}/${data.converted_image_path}`;
+                        console.log('Сконвертированная картинка:', convertedImage.src);  // Логируем URL картинки
                     } else {
                         showError(data.error);
                     }
