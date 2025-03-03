@@ -1,0 +1,23 @@
+<script>
+    const ngrok_url = "{{ https://13c0-78-84-138-169.ngrok-free.app }}";  // Вставляем динамический URL ngrok
+
+    function copyBlueprint(filename) {
+        fetch(`${ngrok_url}/copy/${getCookie('client_id')}/${filename}`)  <!-- Используем новый URL -->
+            .then(response => response.json())
+            .then(data => {
+                if (data.blueprint) {
+                    navigator.clipboard.writeText(data.blueprint)
+                        .then(() => alert("Чертеж скопирован в буфер обмена!"))
+                        .catch(() => alert("Ошибка копирования!"));
+                } else {
+                    alert(data.error || "Ошибка копирования!");
+                }
+            })
+            .catch(() => alert("Ошибка запроса!"));
+    }
+
+    function getCookie(name) {
+        let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? match[2] : null;
+    }
+</script>
