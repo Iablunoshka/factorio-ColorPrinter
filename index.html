@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PNG в Factorio Blueprint</title>
     <script>
+        const ngrokUrl = "https://13c0-78-84-138-169.ngrok-free.app"; // Здесь указываешь свой URL ngrok
+
+        // Функция копирования чертежа в буфер обмена
         function copyBlueprint(filename) {
-            fetch(`/copy/${getCookie('client_id')}/${filename}`)  <!-- Используем GET запрос -->
+            fetch(`${ngrokUrl}/copy/${getCookie('client_id')}/${filename}`)  <!-- Используем ngrok URL -->
                 .then(response => response.json())
                 .then(data => {
                     if (data.blueprint) {
-                        navigator.clipboard.writeText(data.blueprint)  <!-- Копируем текст в буфер обмена -->
+                        navigator.clipboard.writeText(data.blueprint)
                             .then(() => alert("Чертеж скопирован в буфер обмена!"))
                             .catch(() => alert("Ошибка копирования!"));
                     } else {
@@ -20,6 +23,7 @@
                 .catch(() => alert("Ошибка запроса!"));
         }
 
+        // Функция для получения client_id из cookies
         function getCookie(name) {
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             return match ? match[2] : null;
@@ -29,22 +33,16 @@
 <body>
     <h1>Загрузите PNG для конвертации</h1>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="${ngrokUrl}/upload" method="post" enctype="multipart/form-data">
         <label for="file">Выберите файл:</label>
-        <input type="file" name="file" accept=".png, .jpg, .jpeg" required> <!-- Ограничиваем типы файлов -->
-
+        <input type="file" name="file" accept=".png, .jpg, .jpeg" required>
         <br><br>
-
         <label for="scale">Масштаб:</label>
         <input type="number" name="scale" min="0.1" max="10.0" step="0.1" value="1.0" required>
-
         <br><br>
-
         <label for="split">Разделение на чертежи:</label>
-        <input type="number" name="split" min="0" value="1000" required> <!-- Дефолтное значение для разделения 1000 -->
-
+        <input type="number" name="split" min="0" value="1000" required>
         <br><br>
-
         <button type="submit">Сконвертировать</button>
     </form>
 
