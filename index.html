@@ -74,20 +74,28 @@
         });
 
         async function copyBlueprint(client_id, filename) {
-            try {
-                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`);
-                const data = await response.json();
+        try {
+            const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, {
+                credentials: 'include'  // Включаем передачу кук
+            });
 
-                if (data.blueprint) {
-                    await navigator.clipboard.writeText(data.blueprint);
-                    alert('Чертеж скопирован в буфер обмена!');
-                } else {
-                    alert(data.error || 'Ошибка копирования!');
-                }
-            } catch (error) {
-                alert('Ошибка запроса!');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            const data = await response.json();
+
+            if (data.blueprint) {
+                await navigator.clipboard.writeText(data.blueprint);
+                alert('Чертеж скопирован в буфер обмена!');
+            } else {
+                alert(data.error || 'Ошибка копирования!');
+            }
+        } catch (error) {
+            console.error('Ошибка запроса:', error);  // Логируем ошибку
+            alert('Ошибка запроса!');
         }
-    </script>
+    }
+</script>
 </body>
 </html>
