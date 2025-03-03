@@ -55,7 +55,8 @@
                     body: formData,
                     headers: {
                         'Accept': 'application/json'
-                    }
+                    },
+                    credentials: 'include'  
                 });
 
                 const data = await response.json();
