@@ -9,7 +9,7 @@
 <body>
     <h1>Загрузите PNG для конвертации</h1>
 
-    <form id="uploadForm" action="https://13c0-78-84-138-169.ngrok-free.app/upload" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <label for="file">Выберите файл:</label>
         <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg" required>
 
@@ -38,6 +38,9 @@
     </div>
 
     <script>
+        // Укажите здесь ваш ngrok URL
+        const ngrokUrl = 'https://13c0-78-84-138-169.ngrok-free.app';
+
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -47,7 +50,7 @@
             formData.append('split', document.getElementById('split').value);
 
             try {
-                const response = await fetch('https://13c0-78-84-138-169.ngrok-free.app/upload', {
+                const response = await fetch(`${ngrokUrl}/upload`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -60,7 +63,7 @@
                 if (data.success) {
                     document.getElementById('result').style.display = 'block';
                     document.getElementById('copyButton').onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
-                    document.getElementById('downloadLink').href = `https://13c0-78-84-138-169.ngrok-free.app/download/${data.client_id}/${data.blueprint_path}`;
+                    document.getElementById('downloadLink').href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
                 } else {
                     alert(data.error);
                 }
@@ -71,7 +74,7 @@
 
         async function copyBlueprint(client_id, filename) {
             try {
-                const response = await fetch(`https://13c0-78-84-138-169.ngrok-free.app/copy/${client_id}/${filename}`);
+                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`);
                 const data = await response.json();
 
                 if (data.blueprint) {
