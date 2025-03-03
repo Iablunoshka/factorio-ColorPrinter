@@ -1,3 +1,3 @@
-# redirect-site  https://iablunoshka.github.io/factorio-ColorPrinter/
+https://iablunoshka.github.io/factorio-ColorPrinter/
 
 Just a redirect 
