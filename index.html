@@ -4,11 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PNG в Factorio Blueprint</title>
-    <script src="script.js"></script>
+    <style>
+        #error {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Загрузите PNG для конвертации</h1>
 
+    <!-- Форма для загрузки файла -->
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <label for="file">Выберите файл:</label>
         <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg" required>
@@ -28,9 +39,13 @@
         <button type="submit">Сконвертировать</button>
     </form>
 
+    <!-- Блок для отображения ошибок -->
+    <div id="error"></div>
+
     <hr>
 
-    <div id="result" style="display: none;">
+    <!-- Блок для отображения результата -->
+    <div id="result">
         <h2>Ваш чертеж готов!</h2>
         <button id="copyButton">Скопировать чертеж</button>
         <br><br>
@@ -41,61 +56,105 @@
         // Укажите здесь ваш ngrok URL
         const ngrokUrl = 'https://13c0-78-84-138-169.ngrok-free.app';
 
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        // Ограничения
+        const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 МБ
+        const MAX_IMAGE_WIDTH = 4096;
+        const MAX_IMAGE_HEIGHT = 4096;
+
+        // Элементы DOM
+        const uploadForm = document.getElementById('uploadForm');
+        const errorDiv = document.getElementById('error');
+        const resultDiv = document.getElementById('result');
+        const copyButton = document.getElementById('copyButton');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // Обработчик отправки формы
+        uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const formData = new FormData();
-            formData.append('file', document.getElementById('file').files[0]);
-            formData.append('scale', document.getElementById('scale').value);
-            formData.append('split', document.getElementById('split').value);
+            // Сбрасываем сообщения об ошибках
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
 
+            // Получаем файл
+            const file = document.getElementById('file').files[0];
+
+            // Проверка размера файла
+            if (file.size > MAX_FILE_SIZE) {
+                showError('Файл слишком большой! Максимальный размер: 10 МБ.');
+                return;
+            }
+
+            // Проверка разрешения изображения
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = async () => {
+                if (img.width > MAX_IMAGE_WIDTH || img.height > MAX_IMAGE_HEIGHT) {
+                    showError(`Изображение слишком большое! Максимальное разрешение: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}.`);
+                    return;
+                }
+
+                // Если проверки пройдены, отправляем файл на сервер
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('scale', document.getElementById('scale').value);
+                    formData.append('split', document.getElementById('split').value);
+
+                    const response = await fetch(`${ngrokUrl}/upload`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        resultDiv.style.display = 'block';
+                        copyButton.onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
+                        downloadLink.href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
+                    } else {
+                        showError(data.error);
+                    }
+                } catch (error) {
+                    showError('Ошибка соединения с сервером');
+                }
+            };
+        });
+
+        // Функция для отображения ошибок
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Функция для копирования чертежа
+        async function copyBlueprint(client_id, filename) {
             try {
-                const response = await fetch(`${ngrokUrl}/upload`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'include'  
+                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, {
+                    credentials: 'include'
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
                 const data = await response.json();
 
-                if (data.success) {
-                    document.getElementById('result').style.display = 'block';
-                    document.getElementById('copyButton').onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
-                    document.getElementById('downloadLink').href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
+                if (data.blueprint) {
+                    await navigator.clipboard.writeText(data.blueprint);
+                    alert('Чертеж скопирован в буфер обмена!');
                 } else {
-                    alert(data.error);
+                    alert(data.error || 'Ошибка копирования!');
                 }
             } catch (error) {
-                alert('Ошибка соединения с сервером');
+                console.error('Ошибка запроса:', error);
+                alert('Ошибка запроса!');
             }
-        });
-
-        async function copyBlueprint(client_id, filename) {
-        try {
-            const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, {
-                credentials: 'include'  // Включаем передачу кук
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.blueprint) {
-                await navigator.clipboard.writeText(data.blueprint);
-                alert('Чертеж скопирован в буфер обмена!');
-            } else {
-                alert(data.error || 'Ошибка копирования!');
-            }
-        } catch (error) {
-            console.error('Ошибка запроса:', error);  // Логируем ошибку
-            alert('Ошибка запроса!');
         }
-    }
-</script>
+    </script>
 </body>
 </html>
