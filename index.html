@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG в Factorio Blueprint</title>
+    <script>
+        function copyBlueprint(filename) {
+            fetch(`/copy/${getCookie('client_id')}/${filename}`)  <!-- Используем GET запрос -->
+                .then(response => response.json())
+                .then(data => {
+                    if (data.blueprint) {
+                        navigator.clipboard.writeText(data.blueprint)  <!-- Копируем текст в буфер обмена -->
+                            .then(() => alert("Чертеж скопирован в буфер обмена!"))
+                            .catch(() => alert("Ошибка копирования!"));
+                    } else {
+                        alert(data.error || "Ошибка копирования!");
+                    }
+                })
+                .catch(() => alert("Ошибка запроса!"));
+        }
+
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : null;
+        }
+    </script>
+</head>
+<body>
+    <h1>Загрузите PNG для конвертации</h1>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="file">Выберите файл:</label>
+        <input type="file" name="file" accept=".png, .jpg, .jpeg" required> <!-- Ограничиваем типы файлов -->
+
+        <br><br>
+
+        <label for="scale">Масштаб:</label>
+        <input type="number" name="scale" min="0.1" max="10.0" step="0.1" value="1.0" required>
+
+        <br><br>
+
+        <label for="split">Разделение на чертежи:</label>
+        <input type="number" name="split" min="0" value="1000" required> <!-- Дефолтное значение для разделения 1000 -->
+
+        <br><br>
+
+        <button type="submit">Сконвертировать</button>
+    </form>
+
+    <hr>
+
+    {% if blueprint_path %}
+        <h2>Ваш чертеж готов!</h2>
+        <button onclick="copyBlueprint('{{ blueprint_path }}')">Скопировать чертеж</button>
+        <br><br>
+        <a href="{{ url_for('download_file', client_id=client_id, filename=blueprint_path.split('/')[-1]) }}" download>Скачать чертеж</a>
+    {% endif %}
+</body>
+</html>
