@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PNG в Factorio Blueprint</title>
-    <!-- Подключение шрифта Titillium Web -->
+    <title>PNG to Factorio Blueprint</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        /* Применение шрифта ко всей странице */
         body {
             font-family: 'Titillium Web', sans-serif;
         }
-
         #error {
             color: red;
             display: none;
@@ -30,122 +27,76 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-
-        /* Стили для заголовков и кнопок */
-        h1, h2 {
-            font-weight: 600; /* Полужирный шрифт для заголовков */
-        }
-
-        button {
-            font-family: 'Titillium Web', sans-serif;
-            font-weight: 400; /* Обычный шрифт для кнопок */
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        label {
-            font-weight: 300; /* Легкий шрифт для меток */
-        }
-
-        input[type="file"], input[type="number"] {
-            font-family: 'Titillium Web', sans-serif;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
-    <h1>Загрузите PNG для конвертации</h1>
+    <h1>Upload PNG for Conversion</h1>
 
-    <!-- Форма для загрузки файла -->
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
-        <label for="file">Выберите файл:</label>
+        <label for="file">Select file:</label>
         <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg" required>
 
         <br><br>
 
-        <label for="scale">Масштаб:</label>
+        <label for="scale">Scale:</label>
         <input type="number" id="scale" name="scale" min="0.1" max="10.0" step="0.1" value="0.5" required>
 
         <br><br>
 
-        <label for="split">Разделение на чертежи:</label>
+        <label for="split">Split into blueprints:</label>
         <input type="number" id="split" name="split" min="0" value="1000" required>
 
         <br><br>
 
-        <button type="submit">Сконвертировать</button>
+        <button type="submit">Convert</button>
     </form>
 
-    <!-- Блок для отображения ошибок -->
     <div id="error"></div>
 
     <hr>
 
-    <!-- Блок для отображения результата -->
     <div id="result">
-        <h2>Ваш чертеж готов!</h2>
-        <!-- Элемент для отображения сконвертированной картинки -->
-        <img id="convertedImage" src="" alt="Сконвертированная картинка">
+        <h2>Your blueprint is ready!</h2>
+        <img id="convertedImage" src="" alt="Converted Image">
         <br><br>
-        <button id="copyButton">Скопировать чертеж</button>
+        <button id="copyButton">Copy Blueprint</button>
         <br><br>
-        <a id="downloadLink" href="#" download>Скачать чертеж</a>
+        <a id="downloadLink" href="#" download>Download Blueprint</a>
     </div>
 
     <script>
-        // Укажите здесь ваш ngrok URL
         const ngrokUrl = 'https://13c0-78-84-138-169.ngrok-free.app';
-
-        // Ограничения
-        const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 МБ
+        const MAX_FILE_SIZE = 15 * 1024 * 1024;
         const MAX_IMAGE_WIDTH = 4096;
         const MAX_IMAGE_HEIGHT = 4096;
 
-        // Элементы DOM
         const uploadForm = document.getElementById('uploadForm');
         const errorDiv = document.getElementById('error');
         const resultDiv = document.getElementById('result');
         const copyButton = document.getElementById('copyButton');
         const downloadLink = document.getElementById('downloadLink');
-        const convertedImage = document.getElementById('convertedImage');  // Элемент для картинки
+        const convertedImage = document.getElementById('convertedImage');
 
-        // Обработчик отправки формы
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Сбрасываем сообщения об ошибках
             errorDiv.textContent = '';
             errorDiv.style.display = 'none';
 
-            // Получаем файл
             const file = document.getElementById('file').files[0];
 
-            // Проверка размера файла
             if (file.size > MAX_FILE_SIZE) {
-                showError('Файл слишком большой! Максимальный размер: 15 МБ.');
+                showError('File is too large! Max size: 15MB.');
                 return;
             }
 
-            // Проверка разрешения изображения
             const img = new Image();
             img.src = URL.createObjectURL(file);
             img.onload = async () => {
                 if (img.width > MAX_IMAGE_WIDTH || img.height > MAX_IMAGE_HEIGHT) {
-                    showError(`Изображение слишком большое! Максимальное разрешение: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}.`);
+                    showError(`Image is too large! Max resolution: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}.`);
                     return;
                 }
 
-                // Если проверки пройдены, отправляем файл на сервер
                 try {
                     const formData = new FormData();
                     formData.append('file', file);
@@ -155,9 +106,7 @@
                     const response = await fetch(`${ngrokUrl}/upload`, {
                         method: 'POST',
                         body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        },
+                        headers: { 'Accept': 'application/json' },
                         credentials: 'include'
                     });
 
@@ -167,47 +116,35 @@
                         resultDiv.style.display = 'block';
                         copyButton.onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
                         downloadLink.href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
-
-                        // Устанавливаем src для сконвертированной картинки
                         convertedImage.src = `${ngrokUrl}/download/${data.client_id}/${data.converted_image_path}`;
-                        console.log('Сконвертированная картинка:', convertedImage.src);  // Логируем URL картинки
                     } else {
                         showError(data.error);
                     }
                 } catch (error) {
-                    showError('Ошибка соединения с сервером');
+                    showError('Connection error with the server.');
                 }
             };
         });
 
-        // Функция для отображения ошибок
         function showError(message) {
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
         }
 
-        // Функция для копирования чертежа
         async function copyBlueprint(client_id, filename) {
             try {
-                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, {
-                    credentials: 'include'
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, { credentials: 'include' });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
-
                 if (data.blueprint) {
                     await navigator.clipboard.writeText(data.blueprint);
-                    alert('Чертеж скопирован в буфер обмена!');
+                    alert('Blueprint copied to clipboard!');
                 } else {
-                    alert(data.error || 'Ошибка копирования!');
+                    alert(data.error || 'Copying error!');
                 }
             } catch (error) {
-                console.error('Ошибка запроса:', error);
-                alert('Ошибка запроса!');
+                console.error('Request error:', error);
+                alert('Request error!');
             }
         }
     </script>
