@@ -1,152 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PNG to Factorio Blueprint</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Titillium Web', sans-serif;
-        }
-        #error {
-            color: red;
-            display: none;
-            margin-top: 10px;
-        }
-        #result {
-            display: none;
-            margin-top: 20px;
-        }
-        #convertedImage {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Online Image to Blueprint Converter for Factorio</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Titillium Web', sans-serif;
+      background-color: rgb(49, 51, 56);
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background-color: #255b8c;
+      color: #ffe6c0;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between; /* Размещаем элементы по краям */
+      align-items: center; /* Вертикальное выравнивание */
+      border-bottom: 2px solid #81b4da;
+    }
+    header h1 {
+      margin: 0;
+    }
+    header .github-link {
+      color: rgb(33, 150, 243);
+      font-size: 18px;
+      text-decoration: none;
+    }
+    .github-link:hover {
+      text-decoration: underline;
+    }
+    /* Main container */
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1;
+      margin: 20px;
+      gap: 20px;
+    }
+    /* Settings block */
+    .settings {
+      flex: 1;
+      min-width: 250px;
+      background-color: rgb(43, 45, 49);
+      padding: 20px;
+      padding-top: 0;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+    input[type="file"] {
+      transform: scale(0.9);
+    }
+    /* Preview block */
+    .preview {
+      flex: 3;
+      min-width: 300px;
+      background-color: rgb(43, 45, 49);
+      padding: 20px;
+      padding-top: 0;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    /* Headings in blocks */
+    .settings h2,
+    .preview h2 {
+      font-size: 30px;
+      font-weight: bold;
+      color: #dbdee1;
+    }
+    /* Regular text */
+    .settings label,
+    .settings input,
+    .preview div {
+      font-size: 19px;
+      color: #dbdee1;
+    }
+    /* Convert button */
+    .convert-button {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 5px auto 20px auto;
+      padding: 15px;
+      background-color: #3076aa;
+      color: #ffe6c0;
+      text-align: center;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .convert-button:hover {
+      background-color: #21a1f1;
+    }
+    /* Range slider styling */
+    .range-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .range-value {
+      margin-left: 10px;
+    }
+    /* Full-width slider */
+    input[type="range"] {
+      width: 100%;
+      background-color: #255b8c;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 5px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #21a1f1;
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #21a1f1;
+      cursor: pointer;
+    }
+    /* Input field next to label */
+    .input-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .input-container input[type="text"] {
+      width: 50px;
+      padding: 4px;
+      background-color: rgb(33, 34, 38);
+      border: 1px solid #555;
+      border-radius: 5px;
+      color: #dbdee1;
+    }
+    /* Style for input + slider row */
+    .input-label-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .input-label-container label {
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .input-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: space-between;
+    }
+    /* Instructions */
+    .instruction {
+      font-size: 16px;
+      color: #dbdee1;
+      margin-top: 50px;
+      font-style: italic;
+    }
+    /* General button styling */
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+    .action-button {
+      display: inline-block;
+      width: 48%;
+      padding: 12px;
+      background-color: #3076aa;
+      color: #dbdee1;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px 1%;
+    }
+    .action-button:hover {
+      background-color: #21a1f1;
+    }
+    /* About section */
+    .about {
+      background-color: rgb(43, 45, 49);
+      color: #dbdee1;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 8px;
+    }
+    .about h2 {
+      font-size: 30px;
+      font-weight: bold;
+      color: #dbdee1;
+      margin-top: 0;
+    }
+    .about p {
+      font-size: 19px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    /* Style for links */
+    .custom-link {
+      color: rgb(33, 150, 243);
+      text-decoration: none;
+    }
+    .custom-link:hover {
+      text-decoration: underline;
+    }
+    img {
+      height: 100%;
+      width: auto;
+      max-height: 350px;
+    }
+    /* Accordion styles */
+    details {
+      background-color: rgb(43, 45, 49);
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    summary {
+      font-size: 22px;
+      font-weight: bold;
+      color: #dbdee1;
+      cursor: pointer;
+      outline: none;
+      display: inline; /* ограничиваем область клика */
+    }
+    /* Псевдоэлемент для треугольника */
+    summary::before {
+      content: "\25B6";
+      display: inline-block;
+      transition: transform 0.2s ease;
+      margin-right: 8px;
+      pointer-events: none;
+    }
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    details p,
+    details div,
+    details ul {
+      margin: 10px 0 0 20px;
+    }
+    /* Добавляем только новые стили для функционала */
+    #error {
+      color: #ff4444;
+      display: none;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    #convertedImage {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+    /* Добавляем только новые стили для функционала */
+    #error {
+      color: #ff4444;
+      display: none;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    #convertedImage {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Upload PNG for Conversion</h1>
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header>
+      <h1>Image to Blueprint Converter for Factorio</h1>
+      <a href="https://github.com/Iablunoshka/factorio-ColorPrinter/tree/main" class="github-link" target="_blank">GitHub</a>
+    </header>
 
-    <form id="uploadForm" method="POST" enctype="multipart/form-data">
-        <label for="file">Select file:</label>
-        <input type="file" id="file" name="file" accept=".png, .jpg, .jpeg" required>
+    <!-- Main container -->
+    <div class="container">
+      <!-- Settings block -->
+      <div class="settings">
+        <h2>Conversion Settings</h2>
 
-        <br><br>
+        <!-- Error сообщения -->
+        <div id="error"></div>
 
-        <label for="scale">Scale:</label>
-        <input type="number" id="scale" name="scale" min="0.1" max="10.0" step="0.1" value="0.5" required>
+        <label for="upload">Upload Image:</label><br>
+        <input type="file" id="upload" name="upload" accept=".png, .jpg, .jpeg"><br><br>
 
-        <br><br>
+        <!-- Scale Input and Slider -->
+        <div class="input-label-container">
+          <label for="scale">Scale:</label>
+          <div class="input-container">
+            <input type="text" id="scale-input" value="1">
+            <input type="range" id="scale" name="scale" min="0.1" max="10" step="0.1" value="1">
+          </div>
+        </div>
 
-        <label for="split">Split into blueprints:</label>
-        <input type="number" id="split" name="split" min="0" value="1000" required>
+        <!-- Split Input and Slider -->
+        <div class="input-label-container">
+          <label for="split">Split :</label>
+          <div class="input-container">
+            <input type="text" id="split-input" value="0">
+            <input type="range" id="split" name="split" min="0" max="1000" step="10" value="0">
+          </div>
+        </div>
 
-        <br><br>
+        <!-- Инструкции -->
+        <div class="instruction">
+          <strong>Scale:</strong> This parameter adjusts the scaling of the blueprint. For example, if Scale = 2, the blueprint will be doubled in size. By default, the value is set to 1, meaning no scaling. The scaling factor helps to resize the blueprint as per your needs.
+        </div>
+        <div class="instruction">
+          <strong>Split:</strong> This parameter allows you to divide the blueprint into squares of size <strong><SIDE></strong>^2. For example, if Split = 10, the blueprint will be divided into squares of size 10x10. By default, the value is set to 0, meaning it is disabled. The result will be exported as a book, where each blueprint will have X,Y coordinates in its name.
+        </div>
+      </div>
 
-        <button type="submit">Convert</button>
-    </form>
-
-    <div id="error"></div>
-
-    <hr>
-
-    <div id="result">
-        <h2>Your blueprint is ready!</h2>
-        <img id="convertedImage" src="" alt="Converted Image">
-        <br><br>
-        <button id="copyButton">Copy Blueprint</button>
-        <br><br>
-        <a id="downloadLink" href="#" download>Download Blueprint</a>
+      <!-- Preview block -->
+      <div class="preview">
+        <h2>Preview</h2>
+        <div id="preview-area">
+          <img id="convertedImage" src="" alt="Converted Image">
+        </div>
+        <!-- Кнопки -->
+        <div class="action-buttons">
+          <button class="action-button" id="copyButton">Copy</button>
+          <button class="action-button" id="downloadLink">Download</button>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const ngrokUrl = 'https://7117-78-84-138-169.ngrok-free.app';
-        const MAX_FILE_SIZE = 15 * 1024 * 1024;
-        const MAX_IMAGE_WIDTH = 4096;
-        const MAX_IMAGE_HEIGHT = 4096;
+    <!-- Convert Button -->
+    <button class="convert-button">Convert</button>
+  </div>
 
-        const uploadForm = document.getElementById('uploadForm');
-        const errorDiv = document.getElementById('error');
-        const resultDiv = document.getElementById('result');
-        const copyButton = document.getElementById('copyButton');
-        const downloadLink = document.getElementById('downloadLink');
-        const convertedImage = document.getElementById('convertedImage');
+  <!-- About block -->
+  <div class="about">
+    <h2>About the Site</h2>
+    <p>This is a fan-made tool that converts images into blueprints for Factorio. The generated blueprints use the <a href="https://mods.factorio.com/mod/color-coding" target="_blank" class="custom-link">Color Coding</a> mod to display pixels with colored concrete. Simply upload an image, adjust the settings, and get a blueprint that you can import into the game. Decorate your factory with pixel art!</p>
 
-        uploadForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorDiv.textContent = '';
-            errorDiv.style.display = 'none';
+    <h2>Questions &amp; Answers</h2>
 
-            const file = document.getElementById('file').files[0];
+    <details>
+      <summary>1. What are some examples of conversions?</summary>
+      <p>Here are three examples (scale: 0.5, split: 0):</p>
+      <div>
+        <h4>Before:</h4>
+        <img src="before1.png" alt="Before 1">
+        <img src="before2.png" alt="Before 2">
+        <img src="before3.png" alt="Before 3" style="width: 350px;">
+      </div>
+      <div>
+        <h4>After:</h4>
+        <img src="after1.png" alt="After 1">
+        <img src="after2.png" alt="After 2">
+        <img src="after3.png" alt="After 3" style="width: 350px;">
+      </div>
+    </details>
 
-            if (file.size > MAX_FILE_SIZE) {
-                showError('File is too large! Max size: 15MB.');
-                return;
-            }
+    <details>
+      <summary>2. Which formats are supported?</summary>
+      <p>The tool supports the following image formats: <strong>.png, .jpg, .jpeg</strong>.</p>
+    </details>
 
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = async () => {
-                if (img.width > MAX_IMAGE_WIDTH || img.height > MAX_IMAGE_HEIGHT) {
-                    showError(`Image is too large! Max resolution: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}.`);
-                    return;
-                }
+    <details>
+      <summary>3. What are the file upload limitations?</summary>
+      <p>The following limitations apply to uploaded files:</p>
+      <ul>
+        <li>Maximum file size: 15 MB</li>
+        <li>Maximum image width: 4096 px</li>
+        <li>Maximum image height: 4096 px</li>
+      </ul>
+    </details>
 
-                try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('scale', document.getElementById('scale').value);
-                    formData.append('split', document.getElementById('split').value);
+    <details>
+      <summary>4. Are my images saved after upload?</summary>
+      <p>Yes, but images are deleted after every 24 hours.</p>
+    </details>
+  </div>
 
-                    const response = await fetch(`${ngrokUrl}/upload`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' },
-                        credentials: 'include'
-                    });
+  <script>
+    // Ваши существующие обработчики для слайдеров
+    const scaleSlider = document.getElementById("scale");
+    const scaleInput = document.getElementById("scale-input");
+    scaleSlider.addEventListener("input", function() {
+      scaleInput.value = scaleSlider.value;
+    });
+    const splitSlider = document.getElementById("split");
+    const splitInput = document.getElementById("split-input");
+    splitSlider.addEventListener("input", function() {
+      splitInput.value = splitSlider.value;
+    });
+    scaleInput.addEventListener("input", function() {
+      scaleSlider.value = scaleInput.value;
+    });
+    splitInput.addEventListener("input", function() {
+      splitSlider.value = splitInput.value;
+    });
 
-                    const data = await response.json();
+    // Добавляем функционал из шаблона
+    const ngrokUrl = 'https://7117-78-84-138-169.ngrok-free.app';
+    const MAX_FILE_SIZE = 15 * 1024 * 1024;
+    const MAX_IMAGE_WIDTH = 4096;
+    const MAX_IMAGE_HEIGHT = 4096;
 
-                    if (data.success) {
-                        resultDiv.style.display = 'block';
-                        copyButton.onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
-                        downloadLink.href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
-                        convertedImage.src = `${ngrokUrl}/download/${data.client_id}/${data.converted_image_path}`;
-                    } else {
-                        showError(data.error);
-                    }
-                } catch (error) {
-                    showError('Connection error with the server.');
-                }
-            };
-        });
+    const convertButton = document.querySelector('.convert-button');
+    const errorDiv = document.getElementById('error');
+    const resultDiv = document.getElementById('preview-area');
+    const copyButton = document.getElementById('copyButton');
+    const downloadLink = document.getElementById('downloadLink');
+    const convertedImage = document.getElementById('convertedImage');
 
-        function showError(message) {
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
+    convertButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      const file = document.getElementById('upload').files[0];
+      if (!file) {
+        showError('Please select a file!');
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        showError('File is too large! Max size: 15MB.');
+        return;
+      }
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = async () => {
+        if (img.width > MAX_IMAGE_WIDTH || img.height > MAX_IMAGE_HEIGHT) {
+          showError(`Image is too large! Max resolution: ${MAX_IMAGE_WIDTH}x${MAX_IMAGE_HEIGHT}.`);
+          return;
         }
 
-        async function copyBlueprint(client_id, filename) {
-            try {
-                const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, { credentials: 'include' });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                if (data.blueprint) {
-                    await navigator.clipboard.writeText(data.blueprint);
-                    alert('Blueprint copied to clipboard!');
-                } else {
-                    alert(data.error || 'Copying error!');
-                }
-            } catch (error) {
-                console.error('Request error:', error);
-                alert('Request error!');
-            }
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('scale', document.getElementById('scale').value);
+          formData.append('split', document.getElementById('split').value);
+
+          const response = await fetch(`${ngrokUrl}/upload`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' },
+            credentials: 'include'
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            resultDiv.style.display = 'block';
+            copyButton.onclick = () => copyBlueprint(data.client_id, data.blueprint_path);
+            downloadLink.href = `${ngrokUrl}/download/${data.client_id}/${data.blueprint_path}`;
+            convertedImage.src = `${ngrokUrl}/download/${data.client_id}/${data.converted_image_path}`;
+          } else {
+            showError(data.error);
+          }
+        } catch (error) {
+          showError('Connection error with the server.');
         }
-    </script>
+      };
+    });
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    async function copyBlueprint(client_id, filename) {
+      try {
+        const response = await fetch(`${ngrokUrl}/copy/${client_id}/${filename}`, { credentials: 'include' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        if (data.blueprint) {
+          await navigator.clipboard.writeText(data.blueprint);
+          alert('Blueprint copied to clipboard!');
+        } else {
+          alert(data.error || 'Copying error!');
+        }
+      } catch (error) {
+        console.error('Request error:', error);
+        alert('Request error!');
+      }
+    }
+  </script>
 </body>
 </html>
