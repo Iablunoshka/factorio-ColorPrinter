@@ -183,14 +183,15 @@
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
-    fetch('config.json')
+    fetch('config.json?cb=' + Date.now())
       .then(response => response.json())
       .then(config => {
         ngrokUrl = config.ngrokUrl;
         console.log('Загруженный URL:', ngrokUrl);
-        convertButton.disabled = false; // Включаем кнопку после загрузки URL
+        convertButton.disabled = false;
       })
       .catch(error => console.error('Ошибка загрузки конфигурации:', error));
+
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
     const MAX_IMAGE_HEIGHT = 4096;
