@@ -180,10 +180,12 @@
     splitInput.addEventListener("input", () => splitSlider.value = splitInput.value);
 
     // Функционал конвертации
+    let ngrokUrl = ''; 
+
     fetch('config.json')
       .then(response => response.json())
       .then(config => {
-        const ngrokUrl = config.ngrokUrl;
+        ngrokUrl = config.ngrokUrl;
         console.log('Загруженный URL:', ngrokUrl);
       })
       .catch(error => console.error('Ошибка загрузки конфигурации:', error));
