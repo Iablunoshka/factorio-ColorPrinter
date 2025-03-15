@@ -180,20 +180,21 @@
     splitInput.addEventListener("input", () => splitSlider.value = splitInput.value);
 
     // Функционал конвертации
-    let ngrokUrl = ''; 
+    const convertButton = document.querySelector('.convert-button');
+    convertButton.disabled = true; 
 
     fetch('config.json')
       .then(response => response.json())
       .then(config => {
         ngrokUrl = config.ngrokUrl;
         console.log('Загруженный URL:', ngrokUrl);
+        convertButton.disabled = false; // Включаем кнопку после загрузки URL
       })
       .catch(error => console.error('Ошибка загрузки конфигурации:', error));
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
     const MAX_IMAGE_HEIGHT = 4096;
 
-    const convertButton = document.querySelector('.convert-button');
     const errorDiv = document.getElementById('error');
     const copyButton = document.getElementById('copyButton');
     const downloadLink = document.getElementById('downloadLink');
