@@ -183,7 +183,7 @@
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
-    fetch('config.json?cb=' + Date.now())
+    fetch('https://raw.githubusercontent.com/Iablunoshka/factorio-ColorPrinter/refs/heads/config/config.json?cb=' + Date.now())
       .then(response => response.json())
       .then(config => {
         ngrokUrl = config.ngrokUrl;
