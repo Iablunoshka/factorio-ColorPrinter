@@ -183,16 +183,20 @@
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
-    fetch('https://raw.githubusercontent.com/Iablunoshka/factorio-ColorPrinter/refs/heads/config/config.json?cb=' + Date.now(), {
-      cache: 'no-store'
+    fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config', {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
     })
       .then(response => response.json())
-      .then(config => {
+      .then(data => {
+        const configContent = atob(data.content);
+        const config = JSON.parse(configContent);
         ngrokUrl = config.ngrokUrl;
         console.log('Загруженный URL:', ngrokUrl);
         convertButton.disabled = false;
       })
-      .catch(error => console.error('Ошибка загрузки конфигурации:', error));
+      .catch(error => console.error('Ошибка при загрузке конфигурации:', error));
 
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
