@@ -183,11 +183,7 @@
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
-    fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config', {
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    })
+    fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
       .then(response => response.json())
       .then(data => {
         const configContent = atob(data.content);
