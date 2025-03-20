@@ -181,7 +181,11 @@
 
     async function checkServerStatus(url) {
         try {
-            let response = await fetch(url, { method: 'GET' });
+            let response = await fetch(url, { 
+                method: 'GET',
+                // Добавляем таймаут для запроса
+                signal: AbortSignal.timeout(5000)
+            });
     
             if (response.status === 502) {
                 showModal("Проблемы с сервером. Попробуйте позже.");
@@ -193,7 +197,14 @@
                 convertButton.disabled = false;
             }
         } catch (error) {
-            showModal("Проблемы с подключением к серверу.");
+            // Разделяем обработку ошибок сети и HTTP-ошибок
+            if (error.name === 'AbortError') {
+                showModal("Сервер не отвечает. Попробуйте позже.");
+            } else if (error instanceof TypeError) {
+                showModal("Не удалось подключиться к серверу.");
+            } else {
+                showModal("Неизвестная ошибка: " + error.message);
+            }
             convertButton.disabled = true;
         }
     }
