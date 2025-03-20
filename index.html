@@ -179,20 +179,45 @@
     scaleInput.addEventListener("input", () => scaleSlider.value = scaleInput.value);
     splitInput.addEventListener("input", () => splitSlider.value = splitInput.value);
 
+    async function checkServerStatus(url) {
+        try {
+            let response = await fetch(url, { method: 'HEAD' }); // Проверяем только заголовки
+            if (response.status === 502) {
+                showModal("Проблемы с сервером. Попробуйте позже.");
+                convertButton.disabled = true;
+            } else if (!response.ok) {
+                showModal("Проблемы с подключением к серверу.");
+                convertButton.disabled = true;
+            } else {
+                convertButton.disabled = false;
+            }
+        } catch (error) {
+            showModal("Проблемы с подключением к серверу.");
+            convertButton.disabled = true;
+        }
+    }
+    
+    function showModal(message) {
+        const modal = document.createElement('div');
+        modal.classList.add('error-modal');
+        modal.innerHTML = `<div class="modal-content"><p>${message}</p><button onclick="this.parentElement.parentElement.remove()">Закрыть</button></div>`;
+        document.body.appendChild(modal);
+    }
+
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
     fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
-      .then(response => response.json())
-      .then(data => {
-        const configContent = atob(data.content);
-        const config = JSON.parse(configContent);
-        ngrokUrl = config.ngrokUrl;
-        console.log('Загруженный URL:', ngrokUrl);
-        convertButton.disabled = false;
-      })
-      .catch(error => console.error('Ошибка при загрузке конфигурации:', error));
+        .then(response => response.json())
+        .then(data => {
+            const configContent = atob(data.content);
+            const config = JSON.parse(configContent);
+            ngrokUrl = config.ngrokUrl;
+            console.log('Загруженный URL:', ngrokUrl);
+            checkServerStatus(ngrokUrl); // Проверка доступности сервера
+        })
+        .catch(error => console.error('Ошибка при загрузке конфигурации:', error));
 
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
