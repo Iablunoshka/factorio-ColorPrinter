@@ -179,57 +179,55 @@
     scaleInput.addEventListener("input", () => scaleSlider.value = scaleInput.value);
     splitInput.addEventListener("input", () => splitSlider.value = splitInput.value);
 
-    async function checkServerStatus(url) {
-        try {
-            let response = await fetch(url, { 
-                method: 'GET',
-                // Добавляем таймаут для запроса
-                signal: AbortSignal.timeout(5000)
-            });
-    
-            if (response.status === 502) {
-                showModal("Проблемы с сервером. Попробуйте позже.");
-                convertButton.disabled = true;
-            } else if (!response.ok) {
-                showModal(`Ошибка сервера: ${response.status}`);
-                convertButton.disabled = true;
-            } else {
-                convertButton.disabled = false;
-            }
-        } catch (error) {
-            // Разделяем обработку ошибок сети и HTTP-ошибок
-            if (error.name === 'AbortError') {
-                showModal("Сервер не отвечает. Попробуйте позже.");
-            } else if (error instanceof TypeError) {
-                showModal("Не удалось подключиться к серверу.");
-            } else {
-                showModal("Неизвестная ошибка: " + error.message);
-            }
-            convertButton.disabled = true;
-        }
-    }
-
+    // Функция для показа модального окна с сообщением об ошибке
     function showModal(message) {
         const modal = document.createElement('div');
         modal.classList.add('error-modal');
         modal.innerHTML = `<div class="modal-content"><p>${message}</p><button onclick="this.parentElement.parentElement.remove()">Закрыть</button></div>`;
         document.body.appendChild(modal);
     }
+  
+    // Функция для проверки ссылки
+    async function checkNgrokUrl(url) {
+      try {
+        // Делаем HEAD-запрос к URL
+        const response = await fetch(url, { method: 'HEAD' });
+        // Если сервер ответил, но статус не OK, выводим "Проблемы с сервером"
+        if (!response.ok) {
+            showModal("Проблемы с сервером");
+            return false;
+        }
+        return true;
+      } catch (error) {
+        // Если произошла ошибка сети – выводим "Проблемы с подключением к серверу"
+        showModal("Проблемы с подключением к серверу");
+        return false;
+      }
+    }
+
 
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
 
+    // Загружаем конфигурацию с GitHub
     fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
-        .then(response => response.json())
-        .then(data => {
-            const configContent = atob(data.content);
-            const config = JSON.parse(configContent);
-            ngrokUrl = config.ngrokUrl;
-            console.log('Загруженный URL:', ngrokUrl);
-            checkServerStatus(ngrokUrl); // Проверка доступности сервера
-        })
-        .catch(error => console.error('Ошибка при загрузке конфигурации:', error));
+      .then(response => response.json())
+      .then(async data => {
+        const configContent = atob(data.content);
+        const config = JSON.parse(configContent);
+        ngrokUrl = config.ngrokUrl;
+        console.log('Загруженный URL:', ngrokUrl);
+        // После загрузки URL проверяем его валидность
+        const urlValid = await checkNgrokUrl(ngrokUrl);
+        if (urlValid) {
+            convertButton.disabled = false;
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка при загрузке конфигурации:', error);
+        showModal("Проблемы с сервером");
+      });
 
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
