@@ -187,19 +187,31 @@
         document.body.appendChild(modal);
     }
   
-    // Функция для проверки ссылки
     async function checkNgrokUrl(url) {
       try {
-        // Делаем HEAD-запрос к URL
-        const response = await fetch(url, { method: 'HEAD' });
-        // Если сервер ответил, но статус не OK, выводим "Проблемы с сервером"
+        // Делаем GET-запрос, чтобы получить и статус, и содержимое
+        const response = await fetch(url);
+        const text = await response.text();
+    
+        // Если статус не ok, проверяем конкретные коды
         if (!response.ok) {
+          if (response.status === 502) {
+            showModal("Проблемы с сервером (502 Bad Gateway).");
+          } else {
             showModal("Проблемы с сервером");
-            return false;
+          }
+          return false;
         }
+        
+        // Если ответ содержит "Error 1033", показываем соответствующее сообщение
+        if (text.includes("Error 1033")) {
+          showModal("Проблемы подключения к серверу (Error 1033)");
+          return false;
+        }
+        
         return true;
       } catch (error) {
-        // Если произошла ошибка сети – выводим "Проблемы с подключением к серверу"
+        // Если происходит ошибка сети
         showModal("Проблемы с подключением к серверу");
         return false;
       }
