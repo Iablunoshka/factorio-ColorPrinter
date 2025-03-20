@@ -181,7 +181,7 @@
 
     async function checkServerStatus(url) {
         try {
-            let response = await fetch(url, { method: 'HEAD' }); // Проверяем только заголовки
+            let response = await fetch(url, { method: 'GET' }); // Пробуем GET вместо HEAD
             if (response.status === 502) {
                 showModal("Проблемы с сервером. Попробуйте позже.");
                 convertButton.disabled = true;
@@ -196,7 +196,6 @@
             convertButton.disabled = true;
         }
     }
-    
     function showModal(message) {
         const modal = document.createElement('div');
         modal.classList.add('error-modal');
