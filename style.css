@@ -470,3 +470,27 @@
     .modal-footer button:hover {
       background-color: #21a1f1;
     }
+
+    .error-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        text-align: center;
+    }
+    .error-modal .modal-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .error-modal button {
+        padding: 5px 10px;
+        background: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
