@@ -4,6 +4,8 @@
       background-color: rgb(49, 51, 56);
       overflow: hidden;
     }
+
+
     .main-content {
       display: flex;
       flex-direction: column;
