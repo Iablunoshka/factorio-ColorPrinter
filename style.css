@@ -472,49 +472,49 @@
       background-color: #21a1f1;
     }
 
- /* Модальное окно ошибки */
-.error-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgb(43, 45, 49);
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  text-align: center;
-  border-radius: 8px;
-  color: #dbdee1; /* Цвет текста соответствует общему стилю */
-}
-
-.error-modal .modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.error-modal h2 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ff4444; /* Цвет текста ошибки */
-}
-
-.error-modal p {
-  font-size: 18px;
-  color: #dbdee1;
-}
-
-.error-modal button {
-  padding: 12px 20px;
-  background-color: #3076aa;
-  color: #ffe6c0;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-.error-modal button:hover {
-  background-color: #21a1f1;
-}
+     /* Модальное окно ошибки */
+    .error-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgb(43, 45, 49);
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      border-radius: 8px;
+      color: #dbdee1; /* Цвет текста соответствует общему стилю */
+    }
+    
+    .error-modal .modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .error-modal h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff4444; /* Цвет текста ошибки */
+    }
+    
+    .error-modal p {
+      font-size: 18px;
+      color: #dbdee1;
+    }
+    
+    .error-modal button {
+      padding: 12px 20px;
+      background-color: #3076aa;
+      color: #ffe6c0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    
+    .error-modal button:hover {
+      background-color: #21a1f1;
+    }
