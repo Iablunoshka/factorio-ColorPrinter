@@ -184,7 +184,12 @@
     function showModal(message) {
         const modal = document.createElement('div');
         modal.classList.add('error-modal');
-        modal.innerHTML = `<div class="modal-content"><p>${message}</p><button onclick="this.parentElement.parentElement.remove()">Закрыть</button></div>`;
+        modal.innerHTML = `
+            <div class="modal-content">
+                <p>${message}</p>
+                <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Закрыть</button>
+            </div>
+        `;
         document.body.appendChild(modal);
     }
     
