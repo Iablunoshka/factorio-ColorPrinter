@@ -186,42 +186,27 @@
         modal.innerHTML = `<div class="modal-content"><p>${message}</p><button onclick="this.parentElement.parentElement.remove()">Закрыть</button></div>`;
         document.body.appendChild(modal);
     }
-  
+    
+    // Функция для проверки ссылки
     async function checkNgrokUrl(url) {
       try {
-        // Делаем GET-запрос, чтобы получить и статус, и содержимое
         const response = await fetch(url);
-        const text = await response.text();
-    
-        // Если статус не ok, проверяем конкретные коды
-        if (!response.ok) {
-          if (response.status === 502) {
-            showModal("Проблемы с сервером (502 Bad Gateway).");
-          } else {
-            showModal("Проблемы с сервером");
-          }
+        // Если запрос завершился неуспешно или в ответе есть какая-либо ошибка, выводим общее сатирическое сообщение
+        if (!response.ok || (await response.text()).includes("Error")) {
+          showModal("Сервер временно ушёл в закат... Возможно, он устал.");
           return false;
         }
-        
-        // Если ответ содержит "Error 1033", показываем соответствующее сообщение
-        if (text.includes("Error 1033")) {
-          showModal("Проблемы подключения к серверу (Error 1033)");
-          return false;
-        }
-        
         return true;
       } catch (error) {
-        // Если происходит ошибка сети
-        showModal("Проблемы с подключением к серверу");
+        showModal("Мы пытались достучаться до сервера, но он либо в глухой деревне без интернета, либо зашел в режим 'не беспокоить'.");
         return false;
       }
     }
-
-
+    
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true; 
-
+    
     // Загружаем конфигурацию с GitHub
     fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
       .then(response => response.json())
@@ -230,7 +215,7 @@
         const config = JSON.parse(configContent);
         ngrokUrl = config.ngrokUrl;
         console.log('Загруженный URL:', ngrokUrl);
-        // После загрузки URL проверяем его валидность
+        // Проверяем валидность ссылки
         const urlValid = await checkNgrokUrl(ngrokUrl);
         if (urlValid) {
             convertButton.disabled = false;
@@ -238,7 +223,7 @@
       })
       .catch(error => {
         console.error('Ошибка при загрузке конфигурации:', error);
-        showModal("Проблемы с сервером");
+        showModal("Сервер, хранящий конфиг, тоже решил отдохнуть. Наверное, он в отпуске. ");
       });
 
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
