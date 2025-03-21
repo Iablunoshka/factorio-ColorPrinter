@@ -165,6 +165,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
     .convert-button:hover {
       background-color: #21a1f1;
@@ -259,6 +260,8 @@
       border-radius: 8px;
       cursor: pointer;
       margin: 10px 1%;
+      transition: background-color 0.3s ease;
+
     }
     .action-button:hover {
       background-color: #21a1f1;
@@ -466,6 +469,7 @@
       color: #dbdee1;
       font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
     .modal-footer button:hover {
@@ -476,34 +480,45 @@
     .error-modal {
         display: flex;
         justify-content: center;
-        align-items: center;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.8); /* темный фон */
+        background-color: rgba(0, 0, 0, 0.8);
         z-index: 2000;
     }
-    
+
     .error-modal .modal-content {
         background-color: rgb(43, 45, 49);
         color: #ffe6c0;
-        padding: 20px;
+        padding: 30px;
         border-radius: 8px;
         text-align: center;
         width: 80%;
-        max-width: 400px;
+        max-width: 450px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        position: relative; /* Для позиционирования картинок */
     }
-    
+
+    /* Позиционирование текста */
     .error-modal .modal-content p {
         font-size: 18px;
         margin-bottom: 20px;
     }
-    
-    .error-modal .modal-content .close-btn {
-        padding: 10px 20px;
+
+    /* Контейнер для кнопок (для их выравнивания) */
+    .error-modal .modal-content .buttons-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    /* Стиль кнопки закрытия */
+    .error-modal .modal-content .close-btn,
+    .error-modal .modal-content .discord-btn {
+        padding: 10px 20px; /* Добавим немного отступов для кнопок */
         background-color: #3076aa;
         color: #ffe6c0;
         font-size: 16px;
@@ -511,12 +526,46 @@
         border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        flex-grow: 1;  /* Кнопки будут растягиваться, чтобы иметь одинаковую ширину */
+        margin: 0 10px;
+        width: 0;
     }
-    
+    /* Плавная анимация кнопок при наведении */
     .error-modal .modal-content .close-btn:hover {
-        background-color: #21a1f1; /* плавная анимация при наведении */
+        background-color: #21a1f1;
     }
-    
-    .error-modal .modal-content .close-btn:focus {
+    .error-modal .modal-content .discord-btn:hover {
+        background-color: #5865F2;
+    }
+
+    /* Убираем outline при фокусе */
+    .error-modal .modal-content .close-btn:focus,
+    .error-modal .modal-content .discord-btn:focus {
         outline: none;
+    }
+    /* Стили для картинок в верхних углах */
+    .error-modal .modal-content::before,
+    .error-modal .modal-content::after {
+        content: '';
+        position: absolute;
+        top: -29px;
+        width: 70px;
+        height: 70px;
+        background-size: cover;
+    }
+
+    /* Первая картинка (левая верхняя часть) */
+    .error-modal .modal-content::before {
+        left: -30px;
+        background-image: url('error1.png');
+        transform: rotate(-45deg); /* Поворот картинки на 45 градусов */
+    }
+
+    /* Вторая картинка (правая верхняя часть) */
+    .error-modal .modal-content::after {
+        right: -30px;
+        background-image: url('error2.png');
+        transform: rotate(45deg); /* Поворот картинки на -45 градусов */
     }
