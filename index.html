@@ -187,32 +187,43 @@
         modal.innerHTML = `
             <div class="modal-content">
                 <p>${message}</p>
-                <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Закрыть</button>
+                <div class="buttons-container">
+                    <a href="https://discord.gg/wffNKYp5jF" target="_blank" class="discord-btn">
+                        Go to Discord
+                    </a>
+                    <button onclick="closeModal(this)" class="close-btn">Close</button>
+                </div>
             </div>
         `;
         document.body.appendChild(modal);
     }
-    
+
+    // Функция для закрытия модального окна
+    function closeModal(button) {
+        const modal = button.closest('.error-modal');
+        modal.remove();
+    }
+
     // Функция для проверки ссылки
     async function checkNgrokUrl(url) {
       try {
         const response = await fetch(url);
         // Если запрос завершился неуспешно или в ответе есть какая-либо ошибка, выводим общее сатирическое сообщение
         if (!response.ok || (await response.text()).includes("Error")) {
-          showModal("Сервер временно ушёл в закат... Возможно, он устал.");
+          showModal("The server has temporarily ridden off into the sunset... Maybe it's just tired.");
           return false;
         }
         return true;
       } catch (error) {
-        showModal("Мы пытались достучаться до сервера, но он либо в глухой деревне без интернета, либо зашел в режим 'не беспокоить'.");
+        showModal("We tried reaching the server, but it's either in a remote village with no internet or switched to 'Do Not Disturb' mode.");
         return false;
       }
     }
-    
+
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
-    convertButton.disabled = true; 
-    
+    convertButton.disabled = true;
+
     // Загружаем конфигурацию с GitHub
     fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
       .then(response => response.json())
@@ -229,7 +240,7 @@
       })
       .catch(error => {
         console.error('Ошибка при загрузке конфигурации:', error);
-        showModal("Сервер, хранящий конфиг, тоже решил отдохнуть. Наверное, он в отпуске. ");
+        showModal("The server storing the config has also decided to take a break. Guess it's on vacation.");
       });
 
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
