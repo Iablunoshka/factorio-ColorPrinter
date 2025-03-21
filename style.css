@@ -472,49 +472,51 @@
       background-color: #21a1f1;
     }
 
-     /* Модальное окно ошибки */
+    /* Стили для модального окна ошибки */
     .error-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgb(43, 45, 49);
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      text-align: center;
-      border-radius: 8px;
-      color: #dbdee1; /* Цвет текста соответствует общему стилю */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8); /* темный фон */
+        z-index: 2000;
     }
     
     .error-modal .modal-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+        background-color: rgb(43, 45, 49);
+        color: #ffe6c0;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
     }
     
-    .error-modal h2 {
-      font-size: 24px;
-      font-weight: bold;
-      color: #ff4444; /* Цвет текста ошибки */
+    .error-modal .modal-content p {
+        font-size: 18px;
+        margin-bottom: 20px;
     }
     
-    .error-modal p {
-      font-size: 18px;
-      color: #dbdee1;
+    .error-modal .modal-content .close-btn {
+        padding: 10px 20px;
+        background-color: #3076aa;
+        color: #ffe6c0;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
     
-    .error-modal button {
-      padding: 12px 20px;
-      background-color: #3076aa;
-      color: #ffe6c0;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
+    .error-modal .modal-content .close-btn:hover {
+        background-color: #21a1f1; /* плавная анимация при наведении */
     }
     
-    .error-modal button:hover {
-      background-color: #21a1f1;
+    .error-modal .modal-content .close-btn:focus {
+        outline: none;
     }
