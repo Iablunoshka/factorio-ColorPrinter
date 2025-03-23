@@ -1,6 +1,6 @@
 # Factorio Image to Blueprint Converter  
 
-## Description  
+### Description  
 This website allows you to convert images into blueprints for **Factorio**. The generated blueprints use the **Color Coding** mod, which enables pixel representation using colored concrete.  
 
 ### Features  
