@@ -26,7 +26,9 @@
 Для работы чертежей необходимо установить **мод [Color Coding](https://mods.factorio.com/mod/color-coding)**.
 
 ### Исходный код
-Данный сайт основан на коде из репозитория [vixfwis/factorio-printer](https://github.com/vixfwis/factorio-printer) и дополнен новыми функциями.
+Функцыонал сайта основан на коде из репозитория [vixfwis/factorio-printer](https://github.com/vixfwis/factorio-printer) а точнее функцыя конвертирование.
 
 [Перейти к сайту](https://iablunoshka.github.io/factorio-ColorPrinter/)
 
+
+[Связатса со мной](https://discord.gg/wffNKYp5jF) или мой никнейм iablunoshka
