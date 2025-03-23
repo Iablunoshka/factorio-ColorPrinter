@@ -26,6 +26,8 @@ This website allows you to convert images into blueprints for **Factorio**. The 
 To use the blueprints, you must install the **[Color Coding](https://mods.factorio.com/mod/color-coding)** mod.  
 
 ### Source Code  
-This website is based on the [vixfwis/factorio-printer](https://github.com/vixfwis/factorio-printer) repository, with additional features.  
+The website's functionality is based on the code from the [vixfwis/factorio-printer](https://github.com/vixfwis/factorio-printer) repository, specifically the conversion feature.  
 
 [Go to Website](https://iablunoshka.github.io/factorio-ColorPrinter/)  
+
+[Contact Me](https://discord.gg/wffNKYp5jF) or my username: **iablunoshka**  
