@@ -1,3 +1,3 @@
 {
-  "ngrokUrl": "https://tagged-ok-routes-tunnel.trycloudflare.com"
+  "ngrokUrl": "http://127.0.0.1:5000"
 }
