@@ -2,7 +2,7 @@
       margin: 0;
       font-family: 'Titillium Web', sans-serif;
       background-color: rgb(49, 51, 56);
-      overflow: auto;
+      overflow: hidden;  
     }
 
 
@@ -14,10 +14,9 @@
 
     @media (max-width: 768px) { 
       .main-content {
-        min-height: unset; 
+        min-height: auto !important;
       }
     }
-
     /* Header */
     header {
       background-color: #255b8c;
