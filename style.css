@@ -11,6 +11,11 @@
       flex-direction: column;
       min-height: 90vh;
     }
+    @media (max-width: 768px) { 
+      .main-content {
+        min-height: auto; 
+      }
+    }
 
     /* Header */
     header {
