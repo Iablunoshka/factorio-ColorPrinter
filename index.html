@@ -219,13 +219,20 @@
         return false;
       }
     }
-    // Функция для получения значения cookie
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
+    
+    async function checkClientId(serverUrl) {
+      try {
+        const response = await fetch(`${serverUrl}/check_client_id`, {
+          credentials: 'include' // Важно для отправки cookies
+        });
+        const data = await response.json();
+        return data.has_client_id;
+      } catch (error) {
+        console.error('Error checking client_id:', error);
+        return false;
+      }
     }
-        
+    
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true;
@@ -240,55 +247,43 @@
         const config = JSON.parse(configContent);
         const server1Url = config.server1Url;
         const server2Url = config.server2Url;
+        console.log('Server 1 URL:', server1Url);
+        console.log('Server 2 URL:', server2Url);
     
         // Проверяем доступность серверов
-        const [server1Available, server2Available] = await Promise.all([
-          checkNgrokUrl(server1Url),
-          checkNgrokUrl(server2Url)
-        ]);
+        const isServer1Available = await checkNgrokUrl(server1Url);
+        const isServer2Available = await checkNgrokUrl(server2Url);
     
-        const availableServers = [];
-        if (server1Available) availableServers.push(server1Url);
-        if (server2Available) availableServers.push(server2Url);
-    
-        if (availableServers.length === 0) {
+        if (!isServer1Available && !isServer2Available) {
           showModal("Both servers are unavailable. Please try again later.");
           return;
         }
     
-        // Проверяем наличие client_id в cookie
-        const clientId = getCookie('client_id');
-        let selectedServer = availableServers[0];
-    
-        if (clientId) {
-          // Проверяем наличие client_id на серверах
-          const serverChecks = await Promise.all(
-            availableServers.map(async (server) => {
-              try {
-                const response = await fetch(`${server}/check_client_id/${clientId}`);
-                const data = await response.json();
-                return { server, exists: data.exists };
-              } catch (error) {
-                return { server, exists: false };
-              }
-            })
-          );
-    
-          // Выбираем сервер с существующим client_id
-          const validServers = serverChecks.filter(check => check.exists);
-          if (validServers.length > 0) {
-            selectedServer = validServers[0].server;
+        // Если доступен только один сервер - выбираем его
+        if (isServer1Available && !isServer2Available) {
+          ngrokUrl = server1Url;
+        } else if (!isServer1Available && isServer2Available) {
+          ngrokUrl = server2Url;
+        } else {
+          // Если оба сервера доступны, проверяем client_id
+          try {
+            const hasClientId = await checkClientId(server1Url);
+            ngrokUrl = hasClientId ? server1Url : server2Url;
+            console.log(`Both servers available. Client ${hasClientId ? 'has' : 'does not have'} ID. Selected: ${ngrokUrl}`);
+          } catch (error) {
+            console.error('Error checking client ID, defaulting to server1', error);
+            ngrokUrl = server1Url; // По умолчанию, если проверка не удалась
           }
         }
     
-        ngrokUrl = selectedServer;
         convertButton.disabled = false;
+        console.log('Selected server URL:', ngrokUrl);
       })
       .catch(error => {
         console.error('Ошибка при загрузке конфигурации:', error);
         showModal("The server storing the config has also decided to take a break. Guess it's on vacation.");
       });
-
+    
     const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 4096;
     const MAX_IMAGE_HEIGHT = 4096;
