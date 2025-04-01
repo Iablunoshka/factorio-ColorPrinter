@@ -199,45 +199,57 @@
         `;
         document.body.appendChild(modal);
     }
-
+    
     // Функция для закрытия модального окна
     function closeModal(button) {
         const modal = button.closest('.error-modal');
         modal.remove();
     }
-
+    
     // Функция для проверки ссылки
     async function checkNgrokUrl(url) {
       try {
         const response = await fetch(url);
-        // Если запрос завершился неуспешно или в ответе есть какая-либо ошибка, выводим общее сатирическое сообщение
+        // Если запрос завершился неуспешно или в ответе есть ошибка, считаем URL недоступным
         if (!response.ok || (await response.text()).includes("Error")) {
-          showModal("The server has temporarily ridden off into the sunset... Maybe it's just tired.");
           return false;
         }
         return true;
       } catch (error) {
-        showModal("We tried reaching the server, but it's either in a remote village with no internet or switched to 'Do Not Disturb' mode.");
         return false;
       }
     }
-
+    
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true;
-
+    
+    let ngrokUrl = '';
+    
     // Загружаем конфигурацию с GitHub
     fetch('https://api.github.com/repos/Iablunoshka/factorio-ColorPrinter/contents/config.json?ref=config&cb=' + Date.now())
       .then(response => response.json())
       .then(async data => {
         const configContent = atob(data.content);
         const config = JSON.parse(configContent);
-        ngrokUrl = config.ngrokUrl;
-        console.log('Загруженный URL:', ngrokUrl);
-        // Проверяем валидность ссылки
-        const urlValid = await checkNgrokUrl(ngrokUrl);
-        if (urlValid) {
+        const server1Url = config.server1Url;
+        const server2Url = config.server2Url;
+        console.log('Server 1 URL:', server1Url);
+        console.log('Server 2 URL:', server2Url);
+        
+        // Проверяем первый URL
+        if (await checkNgrokUrl(server1Url)) {
+            ngrokUrl = server1Url;
             convertButton.disabled = false;
+        } 
+        // Если первый не работает, проверяем второй
+        else if (await checkNgrokUrl(server2Url)) {
+            ngrokUrl = server2Url;
+            convertButton.disabled = false;
+        } 
+        // Если ни один не работает, выводим модальное окно
+        else {
+            showModal("Both servers are unavailable. Please try again later.");
         }
       })
       .catch(error => {
