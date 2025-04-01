@@ -12,11 +12,6 @@
       min-height: 90vh;
     }
 
-    @media (max-width: 768px) { 
-      .main-content {
-        min-height: auto !important;
-      }
-    }
     /* Header */
     header {
       background-color: #255b8c;
