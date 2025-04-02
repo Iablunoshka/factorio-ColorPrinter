@@ -233,7 +233,6 @@
       }
     }
     
-    // Функция для выбора оптимального сервера
     async function selectOptimalServer(server1Url, server2Url) {
       // Проверяем доступность серверов
       const isServer1Available = await checkNgrokUrl(server1Url);
@@ -244,22 +243,37 @@
       }
     
       // Если доступен только один сервер - выбираем его
-      if (isServer1Available && !isServer2Available) {
-        return server1Url;
-      }
-      if (!isServer1Available && isServer2Available) {
-        return server2Url;
-      }
+      if (isServer1Available && !isServer2Available) return server1Url;
+      if (!isServer1Available && isServer2Available) return server2Url;
     
-      // Если оба сервера доступны, проверяем client_id
+      // Если оба сервера доступны
       try {
-        const hasClientId = await checkClientId(server1Url);
-        const selectedUrl = hasClientId ? server1Url : server2Url;
-        console.log(`Both servers available. Client ${hasClientId ? 'has' : 'does not have'} ID. Selected: ${selectedUrl}`);
-        return selectedUrl;
+        // Проверяем client_id на обоих серверах
+        const [hasServer1ClientId, hasServer2ClientId] = await Promise.all([
+          checkClientId(server1Url),
+          checkClientId(server2Url)
+        ]);
+    
+        // Если есть ID на сервере 1
+        if (hasServer1ClientId) {
+          console.log(`Client has ID on server1. Selected: ${server1Url}`);
+          return server1Url;
+        }
+        
+        // Если есть ID на сервере 2
+        if (hasServer2ClientId) {
+          console.log(`Client has ID on server2. Selected: ${server2Url}`);
+          return server2Url;
+        }
+        
+        // Если ID нет ни на одном сервере - случайное распределение
+        const randomServer = Math.random() > 0.5 ? server1Url : server2Url;
+        console.log(`New client. Randomly selected: ${randomServer}`);
+        return randomServer;
+    
       } catch (error) {
-        console.error('Error checking client ID, defaulting to server1', error);
-        return server1Url; // По умолчанию, если проверка не удалась
+        console.error('Error checking client ID, using random selection', error);
+        return Math.random() > 0.5 ? server1Url : server2Url;
       }
     }
     
