@@ -233,6 +233,36 @@
       }
     }
     
+    // Функция для выбора оптимального сервера
+    async function selectOptimalServer(server1Url, server2Url) {
+      // Проверяем доступность серверов
+      const isServer1Available = await checkNgrokUrl(server1Url);
+      const isServer2Available = await checkNgrokUrl(server2Url);
+    
+      if (!isServer1Available && !isServer2Available) {
+        throw new Error("Both servers are unavailable");
+      }
+    
+      // Если доступен только один сервер - выбираем его
+      if (isServer1Available && !isServer2Available) {
+        return server1Url;
+      }
+      if (!isServer1Available && isServer2Available) {
+        return server2Url;
+      }
+    
+      // Если оба сервера доступны, проверяем client_id
+      try {
+        const hasClientId = await checkClientId(server1Url);
+        const selectedUrl = hasClientId ? server1Url : server2Url;
+        console.log(`Both servers available. Client ${hasClientId ? 'has' : 'does not have'} ID. Selected: ${selectedUrl}`);
+        return selectedUrl;
+      } catch (error) {
+        console.error('Error checking client ID, defaulting to server1', error);
+        return server1Url; // По умолчанию, если проверка не удалась
+      }
+    }
+    
     // Функционал конвертации
     const convertButton = document.querySelector('.convert-button');
     convertButton.disabled = true;
@@ -250,34 +280,13 @@
         console.log('Server 1 URL:', server1Url);
         console.log('Server 2 URL:', server2Url);
     
-        // Проверяем доступность серверов
-        const isServer1Available = await checkNgrokUrl(server1Url);
-        const isServer2Available = await checkNgrokUrl(server2Url);
-    
-        if (!isServer1Available && !isServer2Available) {
+        try {
+          ngrokUrl = await selectOptimalServer(server1Url, server2Url);
+          convertButton.disabled = false;
+          console.log('Selected server URL:', ngrokUrl);
+        } catch (error) {
           showModal("Both servers are unavailable. Please try again later.");
-          return;
         }
-    
-        // Если доступен только один сервер - выбираем его
-        if (isServer1Available && !isServer2Available) {
-          ngrokUrl = server1Url;
-        } else if (!isServer1Available && isServer2Available) {
-          ngrokUrl = server2Url;
-        } else {
-          // Если оба сервера доступны, проверяем client_id
-          try {
-            const hasClientId = await checkClientId(server1Url);
-            ngrokUrl = hasClientId ? server1Url : server2Url;
-            console.log(`Both servers available. Client ${hasClientId ? 'has' : 'does not have'} ID. Selected: ${ngrokUrl}`);
-          } catch (error) {
-            console.error('Error checking client ID, defaulting to server1', error);
-            ngrokUrl = server1Url; // По умолчанию, если проверка не удалась
-          }
-        }
-    
-        convertButton.disabled = false;
-        console.log('Selected server URL:', ngrokUrl);
       })
       .catch(error => {
         console.error('Ошибка при загрузке конфигурации:', error);
