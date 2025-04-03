@@ -155,28 +155,6 @@
     </div>
 
   <script>
-    function adjustScale() {
-        const screenWidth = window.screen.width; // Получаем ширину экрана
-        let scale = 1;
-    
-        if (screenWidth >= 3840) { // 4K (3840×2160)
-            scale = 1.75; // Масштаб 175%
-        } else if (screenWidth >= 2560) { // 2K (2560×1440)
-            scale = 1.5; // Масштаб 150%
-        } else if (screenWidth >= 1920) { // Full HD (1920×1080)
-            scale = 1; // Обычный масштаб
-        } else if (screenWidth < 1280) { // Меньше HD (например, 1024×768)
-            scale = 0.85; // Уменьшаем масштаб
-        }
-    
-        document.body.style.zoom = scale; // Устанавливаем масштаб
-    }
-    
-    // Вызываем при загрузке страницы
-    adjustScale();
-    
-    // Пересчитываем масштаб при изменении размера окна
-    window.addEventListener('resize', adjustScale);
     
     // Обработчики слайдеров
     const scaleSlider = document.getElementById("scale");
