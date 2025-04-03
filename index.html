@@ -155,7 +155,42 @@
     </div>
 
   <script>
-    
+    function updateZoom() {
+        let width = screen.width * window.devicePixelRatio;
+        let coef = 1; 
+        let indent = 20; 
+        let scroll_indent = 94;
+
+        if (width >= 3840) {
+            coef = 1.75;
+            indent = 35;
+            scroll_indent = 165
+        } else if (width >= 2560) {
+            coef = 1.5;
+            indent = 30;
+            scroll_indent = 141
+        } else if (width >= 1920) {
+            coef = 1;
+            indent = 20;
+            scroll_indent = 94
+        } else if (width >= 1366) {
+            coef = 0.8;
+            indent = 15;
+            scroll_indent = 75
+        } else {
+            coef = 0.6;
+            indent = 10;
+            scroll_indent = 56
+        }
+
+        document.documentElement.style.setProperty('--zoom-coef', coef);
+        document.documentElement.style.setProperty('--indent-coef', indent + 'px');
+        document.documentElement.style.setProperty('--scroll-coef', scroll_indent + 'px');
+    }
+
+    window.addEventListener('load', updateZoom);
+    window.addEventListener('resize', updateZoom);
+
     // Обработчики слайдеров
     const scaleSlider = document.getElementById("scale");
     const scaleInput = document.getElementById("scale-input");
