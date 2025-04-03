@@ -1,36 +1,8 @@
-
-
-    :root {
-      --base-scale: 1;
-      --scale-factor: calc(var(--base-scale) * 1vw + var(--base-scale) * 1vh);
-    }
-    
-    @media (min-width: 3840px) { /* 4K и выше */
-      :root {
-        --base-scale: 0.8;
-      }
-    }
-    
-    @media (min-width: 2560px) and (max-width: 3839px) { /* 2K-4K */
-      :root {
-        --base-scale: 0.9;
-      }
-    }
-    
-    @media (max-width: 2559px) { /* Full HD и ниже */
-      :root {
-        --base-scale: 1;
-      }
-    }
     body {
       margin: 0;
       font-family: 'Titillium Web', sans-serif;
       background-color: rgb(49, 51, 56);
       overflow: hidden;
-      transform: scale(calc(0.8 + 0.2 * var(--base-scale)));
-      transform-origin: top left;
-      width: calc(100% / var(--base-scale));
-      height: calc(100vh / var(--base-scale));
     }
 
 
@@ -38,15 +10,13 @@
       display: flex;
       flex-direction: column;
       min-height: 90vh;
-      zoom: var(--base-scale);
     }
 
     /* Header */
     header {
       background-color: #255b8c;
       color: #ffe6c0;
-      padding: calc(24px * var(--base-scale)));
-      font-size: calc(2em * var(--base-scale)));  
+      padding: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -71,8 +41,8 @@
       display: flex;
       flex-wrap: wrap;
       flex: 1;
-      margin: calc(20px * var(--base-scale)));
-      gap: calc(20px * var(--base-scale)));
+      margin: 20px;
+      gap: 20px;
     }
     /* Settings block */
     .settings {
@@ -93,9 +63,9 @@
         flex: 3;
         min-width: 300px;
         background-color: rgb(43, 45, 49);
-        padding: calc(20px * var(--base-scale)));
+        padding: 20px;
         padding-top: 0;
-        border-radius: calc(8px * var(--base-scale)))
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -113,7 +83,7 @@
 
     #convertedImage {
       max-width: 100%;
-      max-height: calc(550px * var(--base-scale)));
+      max-height: 100%;
       object-fit: contain;
       width: auto;
       height: auto;
@@ -185,12 +155,12 @@
       display: block;
       width: calc(100% - 40px);
       margin: 5px auto 20px auto;
-      padding: calc(15px * var(--base-scale)));
+      padding: 15px;
       background-color: #3076aa;
       color: #ffe6c0;
       text-align: center;
       text-decoration: none;
-      font-size: calc(18px * var(--base-scale)));
+      font-size: 18px;
       font-weight: bold;
       border: none;
       border-radius: 8px;
@@ -221,15 +191,15 @@
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: calc(20px * var(--base-scale)));
-      height: calc(20px * var(--base-scale)));
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background-color: #21a1f1;
       cursor: pointer;
     }
     input[type="range"]::-moz-range-thumb {
       width: 20px;
-      height: calc(8px * var(--base-scale)));
+      height: 20px;
       border-radius: 50%;
       background-color: #21a1f1;
       cursor: pointer;
