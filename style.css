@@ -110,7 +110,7 @@
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
     #convertedImage:hover {
-      transform: scale(0.4); /* Легкое увеличение при наведении */
+      transform: scale(1.02); /* Легкое увеличение при наведении */
     }
 
     /* Стили для модального окна */
