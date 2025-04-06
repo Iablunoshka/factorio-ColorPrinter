@@ -227,8 +227,14 @@
             const imageUrl = URL.createObjectURL(file);
             const preview = document.getElementById('convertedImage');
             preview.src = imageUrl;
-            preview.style.display = 'block';
-            preview.classList.add('visible'); 
+            
+            preview.classList.remove('visible');
+            preview.style.opacity = 0;
+            preview.style.transform = 'scale(0.5)';
+            requestAnimationFrame(() => {
+              preview.classList.add('visible');
+            });
+            
             const imageContainer = document.querySelector('.image-container');
             imageContainer.classList.add('has-image');
             imageContainer.style.display = 'flex';
@@ -374,27 +380,35 @@
     const loadingOverlay = document.getElementById('loading-overlay');
 
     fileInput.addEventListener('change', function(e) {
-        const imageContainer = document.querySelector('.image-container');
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewImage = document.getElementById('convertedImage');
-                previewImage.src = e.target.result;
-                previewImage.style.display = 'block';  // показываем изображение
-                previewImage.classList.add('visible');
-                imageContainer.classList.add('has-image'); // добавляем класс с рамкой
-                imageContainer.style.display = 'flex'; // отображаем контейнер
-            }
-            reader.readAsDataURL(file);
-        } else {
-            const previewImage = document.getElementById('convertedImage');
-            previewImage.classList.remove('visible');
-            previewImage.style.display = 'none'; // скрываем изображение, если файл не выбран
-            previewImage.src = '#';
-            imageContainer.classList.remove('has-image');
-            imageContainer.style.display = 'none'; // скрываем контейнер
-        }
+      const imageContainer = document.querySelector('.image-container');
+      const file = this.files[0];
+      const previewImage = document.getElementById('convertedImage');
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+    
+          previewImage.classList.remove('visible');
+          previewImage.style.opacity = 0;
+          previewImage.style.transform = 'scale(0.5)'; 
+          imageContainer.classList.add('has-image');
+          imageContainer.style.display = 'flex';
+    
+          // Заставляем браузер провести рефлоу
+          requestAnimationFrame(() => {
+            previewImage.classList.add('visible');
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Если файл не выбран, скрываем изображение и контейнер
+        previewImage.classList.remove('visible');
+        previewImage.style.opacity = 0;
+        previewImage.src = '#';
+        imageContainer.classList.remove('has-image');
+        imageContainer.style.display = 'none';
+      }
     });
 
     convertButton.addEventListener('click', async (e) => {
