@@ -90,28 +90,15 @@
       object-fit: contain;
       width: auto;
       height: auto;
-      opacity: 0;
-      pointer-events: none;
+      display: none;
       padding: 10px;
       box-sizing: border-box;
-      cursor: pointer;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      transform: scale(0.5); /* стартовое уменьшение */
-    }
-    
-    #convertedImage.visible {
-      opacity: 1;
-      transform: scale(1);
-      pointer-events: auto;
-    }
-    #convertedImage.hidden {
-      transform: scale(0.5);
-      opacity: 0;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer; /* Добавляем курсор-указатель */
+      transition: transform 0.2s ease; /* Плавное увеличение */
     }
     #convertedImage:hover {
       transform: scale(1.02); /* Легкое увеличение при наведении */
-    }
+    }       
 
     /* Стили для модального окна */
     .modal {
