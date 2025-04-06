@@ -218,7 +218,30 @@
     scaleInput.addEventListener("input", () => scaleSlider.value = scaleInput.value);
     splitInput.addEventListener("input", () => splitSlider.value = splitInput.value);
 
-
+    // Обработка вставки изображения (Ctrl+V)
+    document.addEventListener('paste', async (event) => {
+      const items = (event.clipboardData || window.clipboardData).items;
+      for (const item of items) {
+        if (item.type.indexOf("image") === 0) {
+          const file = item.getAsFile();
+          if (file) {
+            const imageUrl = URL.createObjectURL(file);
+    
+            // Устанавливаем его как превью
+            const preview = document.getElementById('convertedImage');
+            preview.src = imageUrl;
+            preview.style.display = 'block';
+            document.getElementById('preview-area').style.display = 'block';
+    
+            // Устанавливаем файл в input[type="file"] (если надо)
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            document.getElementById('upload').files = dataTransfer.files;
+          }
+        }
+      }
+    });
+        
     // Функция для показа модального окна с сообщением об ошибке
     function showModal(message) {
         const modal = document.createElement('div');
