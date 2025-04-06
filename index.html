@@ -225,20 +225,13 @@
           const file = item.getAsFile();
           if (file) {
             const imageUrl = URL.createObjectURL(file);
-    
             const preview = document.getElementById('convertedImage');
             preview.src = imageUrl;
             preview.style.display = 'block';
-            previewImage.classList.add('visible');
-            
+            preview.classList.add('visible'); 
             const imageContainer = document.querySelector('.image-container');
             imageContainer.classList.add('has-image');
             imageContainer.style.display = 'flex';
-            
-            // Если нужно, устанавливаем файл в input[type="file"]
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            document.getElementById('upload').files = dataTransfer.files;
           }
         }
       }
@@ -381,24 +374,21 @@
     const loadingOverlay = document.getElementById('loading-overlay');
 
     fileInput.addEventListener('change', function(e) {
-        // Сбрасываем состояние кнопок при выборе нового файла
-        copyButton.onclick = null;
-        copyButton.textContent = 'Copy';
-        downloadLink.href = '#';
-
         const imageContainer = document.querySelector('.image-container');
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
+                const previewImage = document.getElementById('convertedImage');
                 previewImage.src = e.target.result;
-                previewImage.style.display = 'block'; // показываем изображение
+                previewImage.style.display = 'block';  // показываем изображение
                 previewImage.classList.add('visible');
                 imageContainer.classList.add('has-image'); // добавляем класс с рамкой
                 imageContainer.style.display = 'flex'; // отображаем контейнер
             }
             reader.readAsDataURL(file);
         } else {
+            const previewImage = document.getElementById('convertedImage');
             previewImage.classList.remove('visible');
             previewImage.style.display = 'none'; // скрываем изображение, если файл не выбран
             previewImage.src = '#';
