@@ -93,11 +93,24 @@
       display: none;
       padding: 10px;
       box-sizing: border-box;
-      cursor: pointer; /* Добавляем курсор-указатель */
-      transition: transform 0.2s ease; /* Плавное увеличение */
+      cursor: pointer;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: scale(0.5); /* стартовое уменьшение */
+      opacity: 0; /* стартовая прозрачность */
+    }
+    
+    #convertedImage.visible {
+      display: block;
+      transform: scale(1); /* нормальный размер */
+      opacity: 1; /* полностью видно */
+    }
+    #convertedImage.hidden {
+      transform: scale(0.5);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     #convertedImage:hover {
-      transform: scale(1.02); /* Легкое увеличение при наведении */
+      transform: scale(0.4); /* Легкое увеличение при наведении */
     }
 
     /* Стили для модального окна */
