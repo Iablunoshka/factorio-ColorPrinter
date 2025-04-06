@@ -229,6 +229,7 @@
             const preview = document.getElementById('convertedImage');
             preview.src = imageUrl;
             preview.style.display = 'block';
+            previewImage.classList.add('visible');
             
             const imageContainer = document.querySelector('.image-container');
             imageContainer.classList.add('has-image');
@@ -392,11 +393,13 @@
             reader.onload = function(e) {
                 previewImage.src = e.target.result;
                 previewImage.style.display = 'block'; // показываем изображение
+                previewImage.classList.add('visible');
                 imageContainer.classList.add('has-image'); // добавляем класс с рамкой
                 imageContainer.style.display = 'flex'; // отображаем контейнер
             }
             reader.readAsDataURL(file);
         } else {
+            previewImage.classList.remove('visible');
             previewImage.style.display = 'none'; // скрываем изображение, если файл не выбран
             previewImage.src = '#';
             imageContainer.classList.remove('has-image');
